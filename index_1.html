@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Jessie Moh Ngiik Jun, Artificial Intelligence undergraduate at Universiti Teknologi Malaysia. Projects, hackathons, publication and contact.">
+<title>Jessie Moh Ngiik Jun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&display=swap">
+<style>
+/* Layout: a 1-bit classic desktop. Menu bar on top, dithered desktop, draggable Finder windows that hold each resume section. */
+:root{
+  --frame:#282725;          /* bezel around the screen */
+  --paper:#ffffff;          /* window + menubar surface */
+  --ink:#1d1c1a;            /* all lines and text */
+  --muted:#5b5853;          /* secondary text */
+  --accent:#282725;         /* desktop dither + logo; switchable */
+  --shadow:rgba(20,19,18,.62);
+  --display:"Pixelify Sans","Chicago","Geneva",Verdana,monospace;
+  --body:Verdana,Geneva,"DejaVu Sans",Tahoma,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--frame);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.55;overflow:hidden}
+a{color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.screen{position:fixed;left:16px;right:16px;top:calc(16px + env(safe-area-inset-top,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}
+
+/* ---------- menu bar ---------- */
+.menubar{position:relative;z-index:5000;flex:none;height:50px;background:var(--paper);border-radius:28px 28px 0 0;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:6px;padding:0 18px 0 22px;font-family:var(--display);font-weight:700;font-size:24px}
+.menus{display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.menus::-webkit-scrollbar{display:none}
+.menubar button{font:inherit;color:var(--ink);background:none;border:0;padding:6px 12px;cursor:pointer;white-space:nowrap;line-height:1}
+.menubar button:hover,.menubar button[aria-expanded="true"]{background:var(--ink);color:var(--paper)}
+.logo{display:grid;place-items:center;width:40px;height:36px;padding:0!important}
+.logo svg{width:28px;height:28px}
+.logo:hover svg rect.bg{fill:var(--paper)}
+.dots{display:flex;gap:8px;flex:none}
+.dots button{width:26px;height:26px;border-radius:50%;padding:0;border:0}
+.dots button:hover{background:inherit}
+.dots button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--ink)}
+.dropdown{position:absolute;top:47px;background:var(--paper);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--shadow);font-family:var(--display);font-size:20px;min-width:220px;display:flex;flex-direction:column;padding:4px 0}
+.dropdown button{text-align:left;padding:8px 16px}
+
+/* ---------- desktop ---------- */
+.desktop{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:0 0 24px 24px;background-color:var(--paper);background-image:repeating-conic-gradient(var(--accent) 0 25%,var(--paper) 0 50%);background-size:2px 2px}
+.desk-icons{position:absolute;top:18px;right:14px;bottom:14px;display:flex;flex-direction:column;align-items:center;gap:14px;z-index:1}
+.desk-icons .trash{margin-top:auto}
+.icon{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:4px;cursor:pointer;font:13px/1.3 var(--body);color:var(--ink);text-decoration:none;width:112px;text-align:center}
+.icon svg{width:58px;height:58px;overflow:visible}
+.icon svg *{fill:var(--paper);stroke:var(--ink);stroke-width:1.5;stroke-linejoin:miter;vector-effect:non-scaling-stroke}
+.icon svg .solid{fill:var(--ink)}
+.icon span{padding:1px 5px}
+.desk-icons .icon span{background:var(--paper)}
+.icon.sel svg *{fill:var(--ink);stroke:var(--paper)}
+.icon.sel svg .solid{fill:var(--paper)}
+.icon.sel span{background:var(--ink);color:var(--paper)}
+
+/* ---------- windows ---------- */
+.win{position:absolute;display:flex;flex-direction:column;background:var(--paper);border:3px solid var(--ink);box-shadow:14px 14px 0 var(--shadow);width:min(680px,calc(100% - 170px));height:min(580px,calc(100% - 48px))}
+.win.finder{width:min(780px,calc(100% - 170px));height:min(520px,calc(100% - 48px))}
+.win.small{width:min(440px,calc(100% - 170px));height:min(300px,calc(100% - 48px))}
+.bar{flex:none;height:40px;display:flex;align-items:center;gap:8px;padding:0 8px;border-bottom:3px solid var(--ink);cursor:grab;user-select:none;touch-action:none}
+.bar:active{cursor:grabbing}
+.stripes{flex:1;height:22px;background:repeating-linear-gradient(var(--ink) 0 2px,transparent 2px 4px)}
+.stripes.short{flex:0 0 34px}
+.close{flex:none;width:26px;height:26px;border:3px solid var(--ink);background:var(--paper);padding:0;cursor:pointer;box-shadow:0 0 0 5px var(--paper)}
+.close:hover{background:var(--ink)}
+.bar h2{margin:0;padding:0 10px;font:700 22px/1 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;letter-spacing:.02em}
+.win:not(.active) .stripes,.win:not(.active) .close{visibility:hidden}
+.info{flex:none;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:7px 20px;border-bottom:3px solid var(--ink);font:500 16px/1.2 var(--display);font-variant-numeric:tabular-nums}
+.wbody{flex:1;min-height:0;overflow:auto;padding:24px 28px 32px;scrollbar-color:var(--ink) var(--paper)}
+.wbody::-webkit-scrollbar{width:24px;height:24px}
+.wbody::-webkit-scrollbar-track{background-color:var(--paper);background-image:repeating-conic-gradient(var(--ink) 0 25%,var(--paper) 0 50%);background-size:2px 2px;border-left:3px solid var(--ink)}
+.wbody::-webkit-scrollbar-thumb{background:var(--paper);border:3px solid var(--ink)}
+.wbody::-webkit-scrollbar-corner{background:var(--paper)}
+.zoom{position:absolute;border:2px solid var(--ink);pointer-events:none;z-index:4000}
+
+/* ---------- window content ---------- */
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:26px 6px;justify-items:center;padding-top:8px}
+.prose{max-width:62ch}
+.prose p{margin:0 0 12px}
+h3{font:700 19px/1.2 var(--display);margin:26px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--ink);letter-spacing:.02em}
+h3:first-child{margin-top:0}
+.hello{display:flex;gap:18px;align-items:center;margin-bottom:18px}
+.hello svg{width:84px;height:84px;flex:none}
+.hello h4{margin:0;font:700 26px/1.1 var(--display);text-wrap:balance}
+.hello p{margin:4px 0 0;color:var(--muted)}
+.rows{display:grid;gap:12px}
+.row{display:grid;grid-template-columns:1fr auto;gap:2px 16px;align-items:baseline}
+.row b{font-weight:700}
+.row .r{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .sub{grid-column:1/-1;color:var(--muted);font-size:13px}
+.skills{display:grid;grid-template-columns:120px 1fr;gap:12px 16px;align-items:start}
+.skills dt{font:700 16px/1.6 var(--display)}
+.skills dd{margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{border:2px solid var(--ink);padding:1px 8px;font-size:12px;line-height:1.5;background:var(--paper)}
+
+/* Finder list view */
+.list{border:2px solid var(--ink)}
+.lhead,.list summary{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) minmax(0,1.1fr);gap:12px;padding:8px 12px 8px 34px}
+.lhead{font:700 15px/1.2 var(--display);border-bottom:2px solid var(--ink)}
+.list details+details{border-top:1px solid var(--ink)}
+.list summary{position:relative;cursor:pointer;list-style:none;align-items:baseline}
+.list summary::-webkit-details-marker{display:none}
+.list summary::before{content:"";position:absolute;left:12px;top:13px;border:6px solid transparent;border-left:9px solid var(--ink);border-right:0}
+.list details[open] summary::before{transform:rotate(90deg);transform-origin:3px 6px}
+.list summary:hover{background:var(--ink);color:var(--paper)}
+.list summary:hover::before{border-left-color:var(--paper)}
+.list summary b{font-weight:700}
+.list summary span{font-size:12.5px;color:inherit;opacity:.85}
+.detail{padding:4px 18px 16px 34px;max-width:72ch}
+.detail ul{margin:6px 0 10px;padding-left:18px}
+.detail li{margin-bottom:4px}
+.repo{display:inline-block;margin-top:2px;font:700 14px/1 var(--display);color:var(--ink);text-decoration:none;border:2px solid var(--ink);padding:5px 10px;background:var(--paper)}
+.repo:hover{background:var(--ink);color:var(--paper)}
+.status{display:inline-block;font:700 12px/1 var(--display);letter-spacing:.06em;padding:4px 7px;background:var(--ink);color:var(--paper);vertical-align:2px;margin-left:6px}
+.list summary .status{color:var(--paper);opacity:1;font-size:12px}
+.list summary:hover .status{background:var(--paper);color:var(--ink)}
+.note{font-size:12.5px;color:var(--muted);margin-top:16px}
+
+/* publication */
+.paper{border:2px solid var(--ink);padding:22px 24px;box-shadow:6px 6px 0 var(--ink);max-width:66ch}
+.paper .venue{font:500 15px/1.3 var(--display);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.paper h4{margin:0 0 12px;font:700 21px/1.3 var(--body);text-wrap:balance}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:2px solid var(--ink);margin:18px 0}
+.metrics div{padding:12px 14px}
+.metrics div+div{border-left:2px solid var(--ink)}
+.metrics b{display:block;font:700 28px/1 var(--display);font-variant-numeric:tabular-nums}
+.metrics span{font-size:12px;color:var(--muted)}
+
+/* contact */
+.card{display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--ink)}
+.card:first-of-type{border-top:1px solid var(--ink)}
+.card .k{font:700 16px var(--display)}
+.card .v{font-family:var(--mono);font-size:14px;word-break:break-all;user-select:all}
+.btn{font:700 15px/1 var(--display);padding:7px 14px;border:3px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--ink);color:var(--paper)}
+
+@media (max-width:720px){
+  .screen{left:8px;right:8px;top:calc(8px + env(safe-area-inset-top,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+  .menubar{height:44px;font-size:19px;padding:0 10px 0 12px;border-radius:20px 20px 0 0}
+  .menubar button{padding:6px 8px}
+  .dots{gap:6px}.dots button{width:18px;height:18px}
+  .dropdown{top:41px}
+  .desk-icons{display:none}
+  .desktop{border-radius:0 0 16px 16px}
+  .win,.win.finder,.win.small{left:8px!important;top:8px!important;width:auto;height:auto;right:8px;bottom:8px;box-shadow:6px 6px 0 var(--shadow)}
+  .bar{cursor:default}
+  .wbody{padding:18px 16px 28px}
+  .icons{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:18px 4px}
+  .icon{width:96px}
+  .lhead{display:none}
+  .list summary{grid-template-columns:1fr;gap:2px}
+  .detail{padding-left:20px}
+  .skills{grid-template-columns:1fr;gap:4px}
+  .skills dd{margin-bottom:10px}
+  .metrics{grid-template-columns:1fr}
+  .metrics div+div{border-left:0;border-top:2px solid var(--ink)}
+  .card{grid-template-columns:1fr auto}
+  .card .k{grid-column:1/-1}
+  .paper{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <header class="menubar">
+    <nav class="menus" aria-label="Sections">
+      <button class="logo" data-open="about" aria-label="About Jessie">
+        <svg viewBox="0 0 28 28" aria-hidden="true"><rect class="bg" x="1.5" y="1.5" width="25" height="25" rx="5" fill="var(--accent)" stroke="var(--ink)" stroke-width="2"/><text x="14" y="19.5" text-anchor="middle" font-family="Pixelify Sans, monospace" font-weight="700" font-size="13" fill="var(--paper)" stroke="none">JM</text></svg>
+      </button>
+      <button data-open="about">About</button>
+      <button id="projMenu" aria-haspopup="true" aria-expanded="false">Projects</button>
+      <button data-open="hackathons">Hackathons</button>
+      <button data-open="publication">Publication</button>
+      <button data-open="experience">Experience</button>
+      <button data-open="contact">Contact</button>
+    </nav>
+    <div class="dots" role="group" aria-label="Desktop colour">
+      <button style="background:#f37725" data-accent="#f37725" aria-label="Orange desktop" aria-pressed="false"></button>
+      <button style="background:#3685c5" data-accent="#3685c5" aria-label="Blue desktop" aria-pressed="false"></button>
+      <button style="background:#282725" data-accent="#282725" aria-label="Graphite desktop" aria-pressed="true"></button>
+    </div>
+    <div class="dropdown" id="projDrop" hidden>
+      <button data-open="class">Class Projects</button>
+      <button data-open="individual">Individual Projects</button>
+    </div>
+  </header>
+
+  <main class="desktop" id="desktop">
+    <div class="desk-icons">
+      <button class="icon" data-open="finder" data-icon="drive"><span>Jessie HD</span></button>
+      <button class="icon" data-open="about" data-icon="doc" data-alias><span>Read Me</span></button>
+      <a class="icon" href="https://github.com/jmnj2003" target="_blank" rel="noopener" data-icon="code" data-alias><span>GitHub</span></a>
+      <button class="icon trash" data-open="trash" data-icon="trash"><span>Trash</span></button>
+    </div>
+
+    <!-- Finder -->
+    <section class="win finder" id="w-finder" data-title="Jessie HD">
+      <div class="info"><span>7 items</span><span>3.97 CGPA in folder</span><span>Open to internships</span></div>
+      <div class="wbody">
+        <div class="icons">
+          <button class="icon" data-open="about" data-icon="doc"><span>About Me</span></button>
+          <button class="icon" data-open="class" data-icon="folder"><span>Class Projects</span></button>
+          <button class="icon" data-open="individual" data-icon="folder"><span>Individual Projects</span></button>
+          <button class="icon" data-open="hackathons" data-icon="folder"><span>Hackathons</span></button>
+          <button class="icon" data-open="publication" data-icon="paper"><span>Publication &amp; Conference</span></button>
+          <button class="icon" data-open="experience" data-icon="folder"><span>Part-Time Experience</span></button>
+          <button class="icon" data-open="contact" data-icon="mail"><span>Contact</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="win" id="w-about" data-title="About Me" hidden>
+      <div class="info"><span>Year 3 · B. Artificial Intelligence</span><span>UTM</span><span>CGPA 3.97</span></div>
+      <div class="wbody">
+        <div class="hello">
+          <svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true"><rect x="0.5" y="0.5" width="15" height="15" fill="var(--paper)" stroke="var(--ink)"/><path fill="var(--ink)" d="M5 4h6v1H5zM4 5h1v5H4zM11 5h1v5h-1zM6 7h1v1H6zM9 7h1v1H9zM7 10h2v1H7zM5 11h6v1H5zM3 13h10v2H3z"/></svg>
+          <div>
+            <h4>Jessie Moh Ngiik Jun</h4>
+            <p>AI undergraduate at Universiti Teknologi Malaysia</p>
+          </div>
+        </div>
+        <div class="prose">
+          <p>I'm a third-year Artificial Intelligence student who likes using machine learning to solve practical problems. My work so far spans computer vision on edge hardware, NLP, reinforcement learning, and digital logic, often in team projects where I own a specific component end to end.</p>
+          <p>I care about lifelong learning, creative problem-solving, and working well with a team.</p>
+        </div>
+
+        <h3>Background</h3>
+        <div class="rows">
+          <div class="row"><b>Universiti Teknologi Malaysia</b><span class="r">CGPA 3.97</span><span class="sub">Bachelor in Artificial Intelligence · current</span></div>
+          <div class="row"><b>Multimedia University</b><span class="r">CGPA 3.89</span><span class="sub">Foundation in Information Technology</span></div>
+          <div class="row"><b>Yayasan Sarawak Tunku Abdul Rahman (YBSTAR)</b><span class="r">Scholar</span><span class="sub">Scholarship holder</span></div>
+        </div>
+
+        <h3>Skills</h3>
+        <dl class="skills">
+          <dt>Programming</dt><dd class="tags"><span class="tag">Python</span><span class="tag">C++</span><span class="tag">SQL</span><span class="tag">TensorFlow</span><span class="tag">PyTorch</span><span class="tag">Pandas</span><span class="tag">Matplotlib</span></dd>
+          <dt>AI / ML</dt><dd class="tags"><span class="tag">Deep Learning</span><span class="tag">Computer Vision</span><span class="tag">NLP</span><span class="tag">Reinforcement Learning</span><span class="tag">Generative AI</span><span class="tag">LLM Integration</span><span class="tag">Machine Learning</span><span class="tag">Fuzzy Logic</span><span class="tag">GA / PSO</span></dd>
+          <dt>Tools</dt><dd class="tags"><span class="tag">Figma</span><span class="tag">GitHub</span><span class="tag">Cisco Packet Tracer</span><span class="tag">IBM SPSS</span><span class="tag">XAMPP</span><span class="tag">DBeaver</span><span class="tag">DEEDS</span><span class="tag">Tinkercad</span></dd>
+          <dt>Languages</dt><dd class="tags"><span class="tag">English</span><span class="tag">Malay</span><span class="tag">Mandarin</span></dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Class projects -->
+    <section class="win" id="w-class" data-title="Class Projects" hidden>
+      <div class="info"><span>8 items</span><span>Coursework</span><span>Click a row to expand</span></div>
+      <div class="wbody">
+        <div class="list">
+          <div class="lhead"><span>Name</span><span>Kind</span><span>Built with</span></div>
+          <details open>
+            <summary><b>Blood Cell Classification</b><span>Computer Vision</span><span>TensorFlow · Keras</span></summary>
+            <div class="detail"><ul>
+              <li>Classified 8 blood cell types from 17,092 microscope images, comparing a custom CNN with DenseNet121 transfer learning.</li>
+              <li>The custom CNN reached <b>98.37% test accuracy</b> (DenseNet121: 94.76%) with 24× fewer parameters.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/blood-cell-classification" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>Neural Machine Translation</b><span>Deep Learning</span><span>PyTorch · Hugging Face</span></summary>
+            <div class="detail"><ul>
+              <li>Fine-tuned MarianMT (opus-mt-zh-en) on 30K OPUS Chinese–English sentence pairs.</li>
+              <li>Compared 3 hyperparameter configurations; best model reached <b>21.7 BLEU</b> on held-out test data.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/nmt-marianmt-zh-en" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>TSP: Genetic Algorithm vs PSO</b><span>Optimization</span><span>Python · NumPy</span></summary>
+            <div class="detail"><ul>
+              <li>Built a Genetic Algorithm and a swap-based Particle Swarm Optimizer from scratch to find the shortest round trip through 10 Malaysian cities.</li>
+              <li>The GA found the true optimal route (<b>3,984.61 km</b>, confirmed by checking all 181,440 routes) in 3 of 5 runs; PSO was about 5× faster.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/Tsp-ga-vs-pso" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>IMDB Sentiment Analysis App</b><span>NLP · SAIA 2163</span><span>Streamlit · DistilBERT</span></summary>
+            <div class="detail"><ul>
+              <li>Multi-page Streamlit app comparing TF-IDF, Word2Vec, Naive Bayes, SVM and DistilBERT on IMDB movie reviews.</li>
+              <li>My part was the web application: review history in SQLite, OMDb API movie lookup, Malay/Chinese translation with MarianMT, and Plotly charts.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/NLP-project" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>Smart Traffic Light Optimization</b><span>Reinforcement Learning</span><span>Python · Pygame</span></summary>
+            <div class="detail"><ul>
+              <li>Trained a Q-learning agent for 2,000 episodes with ε-greedy exploration to learn a cost-minimising signal policy.</li>
+              <li>Visualised the intersection in Pygame and analysed convergence with reward curves.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/Smart-Traffic-Light-Optimization" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>Fuzzy Logic Car Speed Controller</b><span>Computational Intelligence</span><span>Python · scikit-fuzzy</span></summary>
+            <div class="detail"><ul>
+              <li>Mamdani fuzzy controller with 27 rules that picks an autonomous car's speed from road curvature, speed limit and pedestrian distance.</li>
+              <li>Tested across all inputs and documented its limits, such as the missing emergency stop.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/fuzzy-autonomous-car-speed" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>Electronic Lift Controller</b><span>Digital Electronics</span><span>DEEDS</span></summary>
+            <div class="detail"><ul>
+              <li>Designed a 3-bit saturating up/down counter, from state diagram to K-maps to Boolean logic.</li>
+              <li>Added authentication, door-control and master-enable safety logic.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/electronic-lift-controller" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>Agricultural Field Monitoring</b><span>IoT Simulation</span><span>Cisco Packet Tracer</span></summary>
+            <div class="detail"><ul>
+              <li>Designed and simulated a smart agriculture network with sensors, routers and cloud connectivity.</li>
+              <li>Demonstrated remote monitoring and data transmission for a real-world IoT use case.</li>
+            </ul><a class="repo" href="https://github.com/jmnj2003/iot-agricultural-field-monitoring" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Individual projects -->
+    <section class="win" id="w-individual" data-title="Individual Projects" hidden>
+      <div class="info"><span>2 items</span><span>Self-directed</span><span>Built outside class</span></div>
+      <div class="wbody">
+        <div class="list">
+          <div class="lhead"><span>Name</span><span>Kind</span><span>Built with</span></div>
+          <details open>
+            <summary><b>AI-Generated Image Detector</b><span>Computer Vision</span><span>PyTorch · CLIP · FastAPI</span></summary>
+            <div class="detail">
+              <p>Upload an image and the web app answers two questions: is it AI-generated, and if so, which company's model made it (Google, OpenAI, ByteDance or open-source)?</p>
+              <ul>
+                <li><b>Stage 1, real vs AI:</b> CLIP ViT-L/14 features with logistic regression reached <b>98.1%</b> on a held-out test set of 3,189 images and <b>99.0%</b> on 100 AI images I generated myself.</li>
+                <li><b>Stage 2, source attribution:</b> <b>95.7%</b> company accuracy on the held-out set (911 images), across 10 generators including Nano Banana, GPT-4o, DALL·E 3, Seedream and SDXL.</li>
+                <li>Every image is re-encoded as JPEG so the model can't cheat by reading file format. On my own unseen images, attribution drops to 64% (ChatGPT images are hardest), which is what I'm improving next.</li>
+              </ul>
+              <a class="repo" href="https://github.com/jmnj2003/ai-image-detector" target="_blank" rel="noopener">View on GitHub ↗</a>
+            </div>
+          </details>
+          <details>
+            <summary><b>Mystery Meal <span class="status">MVP</span></b><span>Full-Stack Web App</span><span>FastAPI · Google Places API</span></summary>
+            <div class="detail">
+              <p>A restaurant picker for Kuala Lumpur that helps people, alone or in a group, decide where to eat.</p>
+              <ul>
+                <li>FastAPI backend that calls the Google Places API, so the API key never sits in browser JavaScript, with mock data so it still runs without a key.</li>
+                <li>Signup and login with JWT tokens for diners and restaurant admins, plus shareable group codes for choosing together.</li>
+                <li>HTML and JavaScript frontend with Google Maps.</li>
+              </ul>
+              <a class="repo" href="https://github.com/jmnj2003/Mystery-meal" target="_blank" rel="noopener">View on GitHub ↗</a>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hackathons -->
+    <section class="win" id="w-hackathons" data-title="Hackathons" hidden>
+      <div class="info"><span>3 items</span><span>2025</span><span>Click a row to expand</span></div>
+      <div class="wbody">
+        <div class="list">
+          <div class="lhead"><span>Project</span><span>Event</span><span>Built with</span></div>
+          <details open>
+            <summary><b>MY-Care AI</b><span>eLLM 2025 Hackathon, Universiti Malaya</span><span>GPT-4o-mini · Whisper · React</span></summary>
+            <div class="detail"><ul>
+              <li>Multilingual healthcare assistant in English, Malay, Chinese and Tamil for symptom triage.</li>
+              <li>Voice intake with Whisper; React, Node and Flask stack.</li>
+            </ul><a class="repo" href="https://github.com/Andersonnn7788/MY-Care-AI" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+          <details>
+            <summary><b>Campus Connect</b><span>Gemini No-Code Hackathon 2025</span><span>AppSheet · Gemini</span></summary>
+            <div class="detail"><ul>
+              <li>Campus super-app built in AppSheet.</li>
+              <li>AI lost-and-found that uses image recognition to match lost and found reports.</li>
+            </ul></div>
+          </details>
+          <details>
+            <summary><b>AI Dealflow Hunter</b><span>Cursor Hackathon 2025</span><span>Cursor · ML scoring</span></summary>
+            <div class="detail"><ul>
+              <li>Startup-discovery web app with ML scoring and risk analysis.</li>
+              <li>Generates investment memos automatically; built with Cursor's agentic coding workflow.</li>
+            </ul><a class="repo" href="https://github.com/xrwong00/cursorhackathon" target="_blank" rel="noopener">View on GitHub ↗</a></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Publication -->
+    <section class="win" id="w-publication" data-title="Publication &amp; Conference" hidden>
+      <div class="info"><span>1 item</span><span>IEEE ISTT2026</span><span>Kuala Lumpur</span></div>
+      <div class="wbody">
+        <article class="paper">
+          <div class="venue"><span class="status" style="margin:0">ACCEPTED</span><span>IEEE ISTT2026 · presenting 14–15 Oct 2026</span></div>
+          <h4>Real-time Road Sign Recognition Using Faster R-CNN and Rule-Based Decision</h4>
+          <p>I authored the Smart Driver Assistance System (SDAS), an edge-AI driver assistance system on a Raspberry Pi 5 that fuses camera, ultrasonic and GPS sensing.</p>
+          <div class="metrics">
+            <div><b>0.9515</b><span>precision (best model)</span></div>
+            <div><b>0.9469</b><span>recall (best model)</span></div>
+            <div><b>7 / 8</b><span>signs identified on road test</span></div>
+          </div>
+          <ul>
+            <li>Benchmarked YOLOv8, SSD and Faster R-CNN for road sign detection.</li>
+            <li>Built a rule-based decision engine that rates each situation SAFE, WARNING or CRITICAL.</li>
+            <li>Validated the full system in a real road test.</li>
+          </ul>
+          <div class="tags" style="margin-top:12px"><span class="tag">Raspberry Pi 5</span><span class="tag">Faster R-CNN</span><span class="tag">YOLOv8</span><span class="tag">SSD</span><span class="tag">Sensor fusion</span></div>
+          <div style="margin-top:16px"><a class="repo" href="https://github.com/syiqin07/SDAS" target="_blank" rel="noopener">View SDAS on GitHub ↗</a></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="win" id="w-experience" data-title="Part-Time Experience" hidden>
+      <div class="info"><span>1 item</span><span>Mar 2025 – Present</span><span>Part-time</span></div>
+      <div class="wbody">
+        <div class="row"><b style="font:700 20px/1.2 var(--display)">Warehouse Assistant</b><span class="r">Mar 2025 – Present</span><span class="sub">StarDust Warehouse · Part-time</span></div>
+        <ul style="max-width:66ch;padding-left:18px;margin:14px 0 18px">
+          <li>Managed inventory and order fulfilment for Shopee, TikTok Shop, Lazada and Shopify storefronts.</li>
+          <li>Ran WMS/ERP systems for stock synchronisation, order processing and shipment records across marketplaces.</li>
+          <li>Supported the logistics team with shipment handling, reconciliation and reporting.</li>
+        </ul>
+        <h3>Systems used</h3>
+        <div class="tags"><span class="tag">BigSeller</span><span class="tag">Jushuitan</span><span class="tag">Mabang</span><span class="tag">Dianxiaomi</span><span class="tag">Shopee</span><span class="tag">TikTok Shop</span><span class="tag">Lazada</span><span class="tag">Shopify</span></div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="win" id="w-contact" data-title="Contact" hidden>
+      <div class="info"><span>2 items</span><span>Replies within a day or two</span><span>Malaysia</span></div>
+      <div class="wbody">
+        <p class="prose" style="margin-top:0">I'm looking for AI / ML internship opportunities. Email is the best way to reach me.</p>
+        <div class="card"><span class="k">Email</span><span class="v" id="email">jm320nj@gmail.com</span><button class="btn" id="copyEmail">Copy</button></div>
+        <div class="card"><span class="k">GitHub</span><span class="v">github.com/jmnj2003</span><a class="btn" href="https://github.com/jmnj2003" target="_blank" rel="noopener">Open</a></div>
+      </div>
+    </section>
+
+    <!-- Trash -->
+    <section class="win small" id="w-trash" data-title="Trash" hidden>
+      <div class="info"><span>0 items</span><span>Emptied</span></div>
+      <div class="wbody"><p class="prose" style="margin:0">Recently deleted: one image detector that was reading JPEG compression instead of pixels.</p></div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  const ICONS={
+    folder:'<path d="M4 11h24v16H4z"/><path d="M6 11l1.5-3.5h6L15 11"/>',
+    doc:'<path d="M8 3h11.5l5 5v21H8z"/><path d="M19.5 3v5h5"/><path class="solid" d="M10.5 7h6v2h-6z"/><path d="M10.5 12h11M10.5 15h11M10.5 18h11M10.5 21h11M10.5 24h7"/>',
+    paper:'<path d="M8 3h11.5l5 5v21H8z"/><path d="M19.5 3v5h5"/><path d="M10.5 10h11M10.5 13h11M10.5 16h8"/><circle cx="20" cy="22.5" r="4"/><path d="M18 26l-1 4 3-1.5 3 1.5-1-4"/>',
+    mail:'<path d="M3 8h26v17H3z"/><path d="M3 8l13 10L29 8"/>',
+    drive:'<path d="M3 12h26v9H3z"/><path class="solid" d="M6 17h3v1.5H6z"/>',
+    trash:'<path d="M6 9h20"/><path d="M13 6h6v3h-6z"/><path d="M8 9h16l-1.5 19h-13z"/><path d="M12.5 13v11M16 13v11M19.5 13v11"/>',
+    code:'<path d="M4 6h24v20H4z"/><path d="M4 10h24"/><path d="M12.5 14l-3.5 3.5 3.5 3.5M19.5 14l3.5 3.5-3.5 3.5"/>'
+  };
+  const ALIAS='<path d="M1 31l6.5-6.5" stroke-width="2"/><path class="solid" d="M4 23.5h5v5z"/>';
+  document.querySelectorAll('[data-icon]').forEach(el=>{
+    const svg='<svg viewBox="0 0 32 32" aria-hidden="true">'+ICONS[el.dataset.icon]+(el.hasAttribute('data-alias')?ALIAS:'')+'</svg>';
+    el.insertAdjacentHTML('afterbegin',svg);
+  });
+
+  const desk=document.getElementById('desktop');
+  const coarse=matchMedia('(pointer: coarse)').matches;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow=()=>desk.clientWidth<700;
+  let z=10, cascade=0;
+
+  // build title bars
+  document.querySelectorAll('.win').forEach(w=>{
+    const bar=document.createElement('div');
+    bar.className='bar';
+    bar.innerHTML='<span class="stripes short"></span><button class="close" aria-label="Close '+w.dataset.title+'"></button><span class="stripes"></span><h2>'+w.dataset.title+'</h2><span class="stripes"></span>';
+    w.prepend(bar);
+    w.setAttribute('role','dialog');
+    w.setAttribute('aria-label',w.dataset.title);
+    bar.querySelector('.close').addEventListener('click',e=>{e.stopPropagation();closeWin(w)});
+    w.addEventListener('pointerdown',()=>focusWin(w));
+    drag(w,bar);
+  });
+
+  function focusWin(w){
+    document.querySelectorAll('.win.active').forEach(x=>x.classList.remove('active'));
+    w.classList.add('active'); w.style.zIndex=++z;
+  }
+  function closeWin(w){
+    w.hidden=true; w.classList.remove('active');
+    const open=[...document.querySelectorAll('.win:not([hidden])')].sort((a,b)=>b.style.zIndex-a.style.zIndex);
+    if(open[0]) focusWin(open[0]);
+    if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+  }
+  function place(w){
+    if(w.dataset.placed) return;
+    w.dataset.placed='1';
+    const dw=desk.clientWidth, dh=desk.clientHeight;
+    if(w.id==='w-finder'){
+      w.style.left=Math.max(16,(dw-150-w.offsetWidth)/2)+'px';
+      w.style.top=Math.max(16,(dh-w.offsetHeight)/2-8)+'px';
+      return;
+    }
+    const n=cascade++%6;
+    w.style.left=Math.min(dw-w.offsetWidth-150, 60+n*34)+'px';
+    w.style.top=Math.max(12,Math.min(dh-w.offsetHeight-20, 22+n*30))+'px';
+  }
+  function zoom(from,to,done){
+    if(reduce||!from){done();return}
+    const steps=7, rects=[];
+    for(let i=1;i<=steps;i++){
+      const t=i/steps, r=document.createElement('div');
+      r.className='zoom';
+      r.style.left=from.left+(to.left-from.left)*t+'px';
+      r.style.top=from.top+(to.top-from.top)*t+'px';
+      r.style.width=from.width+(to.width-from.width)*t+'px';
+      r.style.height=from.height+(to.height-from.height)*t+'px';
+      rects.push(r);
+    }
+    rects.forEach((r,i)=>setTimeout(()=>{desk.appendChild(r); if(rects[i-2]) rects[i-2].remove();},i*22));
+    setTimeout(()=>{rects.forEach(r=>r.remove());done()},steps*22+30);
+  }
+  function rel(el){
+    const a=el.getBoundingClientRect(), d=desk.getBoundingClientRect();
+    return {left:a.left-d.left,top:a.top-d.top,width:a.width,height:a.height};
+  }
+  function openWin(id,src){
+    const w=document.getElementById('w-'+id); if(!w) return;
+    hideDrop();
+    if(!w.hidden){focusWin(w);return}
+    w.style.visibility='hidden'; w.hidden=false; place(w);
+    const to=rel(w); w.hidden=true; w.style.visibility='';
+    const from=src&&src.offsetParent?rel(src.querySelector('svg')||src):null;
+    zoom(from,to,()=>{w.hidden=false;focusWin(w);const c=w.querySelector('.close');c&&c.focus({preventScroll:true})});
+  }
+  function drag(w,bar){
+    let sx,sy,ox,oy,on=false;
+    bar.addEventListener('pointerdown',e=>{
+      if(e.target.closest('.close')||narrow()) return;
+      on=true; sx=e.clientX; sy=e.clientY; ox=w.offsetLeft; oy=w.offsetTop;
+      bar.setPointerCapture(e.pointerId);
+    });
+    bar.addEventListener('pointermove',e=>{
+      if(!on) return;
+      const nx=Math.min(desk.clientWidth-80,Math.max(80-w.offsetWidth,ox+e.clientX-sx));
+      const ny=Math.min(desk.clientHeight-44,Math.max(0,oy+e.clientY-sy));
+      w.style.left=nx+'px'; w.style.top=ny+'px';
+    });
+    const end=()=>{on=false}; bar.addEventListener('pointerup',end); bar.addEventListener('pointercancel',end);
+  }
+
+  // icons: click selects, double-click opens (single tap on touch)
+  document.querySelectorAll('.icon[data-open]').forEach(ic=>{
+    ic.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(coarse){openWin(ic.dataset.open,ic);return}
+      ic.closest('.icons,.desk-icons').querySelectorAll('.icon.sel').forEach(x=>x.classList.remove('sel'));
+      ic.classList.add('sel');
+    });
+    ic.addEventListener('dblclick',()=>openWin(ic.dataset.open,ic));
+    ic.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();openWin(ic.dataset.open,ic)}});
+  });
+  desk.addEventListener('click',e=>{if(e.target===desk) document.querySelectorAll('.icon.sel').forEach(x=>x.classList.remove('sel'))});
+
+  // menu bar
+  const drop=document.getElementById('projDrop'), pm=document.getElementById('projMenu');
+  function hideDrop(){drop.hidden=true;pm.setAttribute('aria-expanded','false')}
+  pm.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(!drop.hidden){hideDrop();return}
+    const mb=pm.closest('.menubar').getBoundingClientRect(), b=pm.getBoundingClientRect();
+    drop.style.left=Math.max(0,b.left-mb.left)+'px'; drop.hidden=false; pm.setAttribute('aria-expanded','true');
+    drop.querySelector('button').focus();
+  });
+  document.querySelectorAll('.menubar [data-open]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openWin(b.dataset.open,b)}));
+  document.addEventListener('click',hideDrop);
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Escape') return;
+    if(!drop.hidden){hideDrop();pm.focus();return}
+    const a=document.querySelector('.win.active'); if(a&&a.id!=='w-finder') closeWin(a);
+  });
+
+  // desktop colour
+  const dots=document.querySelectorAll('[data-accent]');
+  function setAccent(c){
+    document.documentElement.style.setProperty('--accent',c);
+    dots.forEach(d=>d.setAttribute('aria-pressed',String(d.dataset.accent===c)));
+    try{localStorage.setItem('jm-accent',c)}catch(_){}
+  }
+  dots.forEach(d=>d.addEventListener('click',()=>setAccent(d.dataset.accent)));
+  try{const s=localStorage.getItem('jm-accent'); if(s) setAccent(s)}catch(_){}
+
+  // copy email
+  const cb=document.getElementById('copyEmail');
+  cb.addEventListener('click',()=>{
+    const t=document.getElementById('email').textContent;
+    const ok=()=>{cb.textContent='Copied';setTimeout(()=>cb.textContent='Copy',1600)};
+    const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('email'));const s=getSelection();s.removeAllRanges();s.addRange(r);cb.textContent='Selected'};
+    try{navigator.clipboard.writeText(t).then(ok,fallback)}catch(_){fallback()}
+  });
+
+  // initial state
+  const fin=document.getElementById('w-finder'); place(fin); focusWin(fin);
+  const h=location.hash.slice(1);
+  if(h&&document.getElementById('w-'+h)) openWin(h,null);
+  addEventListener('hashchange',()=>{const k=location.hash.slice(1); if(k) openWin(k,null)});
+})();
+</script>
+
+</body>
+</html>
